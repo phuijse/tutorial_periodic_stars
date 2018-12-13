@@ -54,27 +54,3 @@ class VAE(torch.nn.Module):
         ELBO = torch.sum(logsumexp(logqzxpz - logpxz, dim=1) + np.log(mc_samples))
         return ELBO, logpxz.sum()/mc_samples, logqzxpz.sum()/logqzxpz.shape[1]
     
-class live_metric_plotter:
-    """
-    This create and update the plots of the reconstruction error  and the KL divergence
-    """
-    def __init__(self, figsize=(7, 3)):
-        self.fig, ax1 = plt.subplots(1, figsize=figsize, tight_layout=True)
-        ax2 = ax1.twinx() 
-        ax2.set_ylabel('KL qzx||pz (dotted)');
-        ax1.set_ylabel('log pxz (solid)')
-        ax1.set_xlabel('Epoch')
-        ax1.plot(0, alpha=0.75, linewidth=2, label='Train') 
-        ax1.plot(0, alpha=0.75, linewidth=2, label='Validation')
-        ax2.plot(0, alpha=0.75, linewidth=2, label='Train', linestyle='--') 
-        ax2.plot(0, alpha=0.75, linewidth=2, label='Validation', linestyle='--')
-        plt.legend(); plt.grid(); 
-        self.axes = list([ax1, ax2])   
-        
-    def update(self, epoch, metrics):
-        for i, ax in enumerate(self.axes):
-            for j, line in enumerate(ax.lines):
-                line.set_data(range(epoch+1), metrics[:epoch+1, j, i])
-            ax.set_xlim([0, epoch])
-            ax.set_ylim([np.amin(metrics[:epoch+1, :, i]), np.amax(metrics[:epoch+1, :, i])])
-        self.fig.canvas.draw();
