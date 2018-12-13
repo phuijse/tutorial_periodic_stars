@@ -58,8 +58,8 @@ class live_metric_plotter:
     """
     This create and update the plots of the reconstruction error  and the KL divergence
     """
-    def __init__(self):
-        self.fig, ax1 = plt.subplots(1, 1, figsize=(7, 3), dpi=80, tight_layout=True)
+    def __init__(self, figsize=(7, 3)):
+        self.fig, ax1 = plt.subplots(1, figsize=figsize, tight_layout=True)
         ax2 = ax1.twinx() 
         ax2.set_ylabel('KL qzx||pz (dotted)');
         ax1.set_ylabel('log pxz (solid)')
