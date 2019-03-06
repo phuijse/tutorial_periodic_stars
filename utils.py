@@ -1,6 +1,18 @@
 import numpy as np
 import matplotlib.pylab as plt
 
+def create_noisy_xor(N_per_cluster=500, stddev_noise=0.4):
+    data = stddev_noise*np.random.randn(4*N_per_cluster, 2)
+    data[0*N_per_cluster:1*N_per_cluster, :] += [1.0, -1.0]
+    data[1*N_per_cluster:2*N_per_cluster, :] += [-1.0, 1.0]
+    data[2*N_per_cluster:3*N_per_cluster :] += [-1.0, -1.0]
+    data[3*N_per_cluster:4*N_per_cluster, :] += [1.0, 1.0]
+    #data = (data - np.mean(X, axis=0))/np.std(X, axis=0)
+    labels = np.zeros(shape=(4*N_per_cluster,), dtype=int)
+    labels[2*N_per_cluster:] = 1.0
+    NP = np.random.permutation(4*N_per_cluster)
+    return data[NP, :], labels[NP]
+
 def featurize_lc(lc_data, period, phi_interp, sp=0.15): 
     mjd, mag, err = lc_data.T
     phi = np.mod(mjd, period)/period
@@ -37,7 +49,7 @@ class live_metric_plotter:
         self.fig, ax1 = plt.subplots(1, figsize=figsize, tight_layout=True)
         ax2 = ax1.twinx() 
         ax2.set_ylabel('KL qzx||pz (dotted)');
-        ax1.set_ylabel('log pxz (solid)')
+        ax1.set_ylabel('-log pxz (solid)')
         ax1.set_xlabel('Epoch')
         ax1.plot(0, alpha=0.75, linewidth=2, label='Train') 
         ax1.plot(0, alpha=0.75, linewidth=2, label='Validation')
